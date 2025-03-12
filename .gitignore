@@ -1,0 +1,42 @@
+# IDE/Tools
+.idea
+/.vscode
+# vim
+.*.sw?
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+# Build Output
+target/
+_build/
+
+# CI uses these folder for temporary caches
+.go
+.load-cache-env
+.buildkite-caches
+.cache
+
+# Test results XML file
+junit-tests.xml
+coverage.out
+
+# Ignore helm chart set up files
+chart/charts
+
+.DS_Store
+
+failed_patches
