@@ -38,7 +38,7 @@ type MethodResult struct {
 }
 
 // Middleware defines a function that wraps around method execution
-type Middleware func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) MethodResult) MethodResult
+type Middleware func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) *MethodResult) *MethodResult
 
 // handler handles JSON-RPC messages. There is one handler per connection. Note that
 // handler is not safe for concurrent use. Message handling never blocks indefinitely
@@ -574,14 +574,14 @@ func (h *handler) handleSubscribe(cp *callProc, msg *jsonrpcMessage) *jsonrpcMes
 
 // runMethod runs the Go callback for an RPC method.
 func (h *handler) runMethod(ctx context.Context, msg *jsonrpcMessage, callb *callback, args []reflect.Value) *jsonrpcMessage {
-	next := func(ctx context.Context, method string, args []reflect.Value) MethodResult {
+	next := func(ctx context.Context, method string, args []reflect.Value) *MethodResult {
 		result, err := callb.call(ctx, method, args)
-		return MethodResult{Result: result, Error: err}
+		return &MethodResult{Result: result, Error: err}
 	}
 	for i := len(h.reg.middlewares) - 1; i >= 0; i-- {
 		middleware := h.reg.middlewares[i]
 		nextFunc := next
-		next = func(ctx context.Context, method string, args []reflect.Value) MethodResult {
+		next = func(ctx context.Context, method string, args []reflect.Value) *MethodResult {
 			return middleware(ctx, method, args, nextFunc)
 		}
 	}

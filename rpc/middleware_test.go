@@ -60,7 +60,7 @@ func TestMiddlewareExecution(t *testing.T) {
 
 	var middlewareCalled int32
 	registry.setMiddlewares([]Middleware{
-		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) MethodResult) MethodResult {
+		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) *MethodResult) *MethodResult {
 			atomic.AddInt32(&middlewareCalled, 1)
 			return next(ctx, method, args)
 		},
@@ -95,7 +95,7 @@ func TestMiddlewareChain(t *testing.T) {
 	// Set up middlewares
 	registry.setMiddlewares([]Middleware{
 		// First middleware
-		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) MethodResult) MethodResult {
+		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) *MethodResult) *MethodResult {
 			mu.Lock()
 			order = append(order, 1)
 			mu.Unlock()
@@ -109,7 +109,7 @@ func TestMiddlewareChain(t *testing.T) {
 			return result
 		},
 		// Second middleware
-		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) MethodResult) MethodResult {
+		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) *MethodResult) *MethodResult {
 			mu.Lock()
 			order = append(order, 2)
 			mu.Unlock()
@@ -167,7 +167,7 @@ func TestServerMiddleware(t *testing.T) {
 
 	// Set middleware on the server
 	server.SetMiddlewares([]Middleware{
-		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) MethodResult) MethodResult {
+		func(ctx context.Context, method string, args []reflect.Value, next func(ctx context.Context, method string, args []reflect.Value) *MethodResult) *MethodResult {
 			atomic.AddInt32(&middlewareCalled, 1)
 			return next(ctx, method, args)
 		},
